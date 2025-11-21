@@ -1,0 +1,33 @@
+{
+  "name": "cpp-reference-viewer",
+  "version": "0.1.0",
+  "description": "A modern offline viewer for C++ reference documentation with full-text search and interactive navigation",
+  "private": true,
+  "author": {
+    "name": "N.N.M."
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build:index": "node scripts/build-search-index.mjs",
+    "build:wiki": "mkdir -p public/wiki && cp -r ../wiki/* public/wiki/",
+    "build": "npm run build:index && npm run build:wiki && next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "lucide-react": "^0.554.0",
+    "next": "16.0.3",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.3",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

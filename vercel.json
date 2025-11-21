@@ -1,0 +1,12 @@
+{
+  "buildCommand": "cd web && npm run build && cp -r ../wiki public/wiki",
+  "outputDirectory": "web/.next",
+  "installCommand": "cd web && npm install",
+  "framework": "nextjs",
+  "rewrites": [
+    {
+      "source": "/wiki/:path*",
+      "destination": "/wiki/:path*"
+    }
+  ]
+}

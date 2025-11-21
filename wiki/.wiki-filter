@@ -1,0 +1,7 @@
+# Default filter rules
+.*
+*.tmp
+*.log
+node_modules/
+.git/
+.wiki-filter
