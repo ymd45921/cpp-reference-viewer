@@ -10,12 +10,34 @@ export function createStaticProvider(origin: string): Provider {
   return {
     async exists(rel) {
       const t0 = Date.now();
-      const r = await fetch(`${origin}${STATIC_WIKI_PREFIX}/${encodeURI(rel)}`, { method: "HEAD" });
-      if (!r.ok) return null;
-      const ct = r.headers.get("content-type") || getContentType(rel);
-      if (/html/.test(ct) || /json|css|javascript|svg|png|jpg|jpeg|gif|ico|ttf/.test(ct)) return "file";
-      logger.debug({ rel, ct, ms: Date.now() - t0 }, "static.exists");
-      return "file";
+      if (!cachedTree) {
+        const r = await fetch(`${origin}${STATIC_TREE_PATH}`);
+        if (!r.ok) return null;
+        cachedTree = (await r.json()) as TreeNode[];
+      }
+      const parts = (rel || "").split("/").filter(Boolean);
+      if (parts.length === 0) {
+        logger.debug({ rel, kind: "dir", ms: Date.now() - t0 }, "static.exists");
+        return "dir";
+      }
+      let nodes: TreeNode[] | null = cachedTree;
+      for (let i = 0; i < parts.length; i++) {
+        const p = parts[i];
+        const matched: TreeNode | undefined = (nodes ?? []).find((n) => n.name === p && !!n.children);
+        if (!matched) {
+          nodes = null;
+          break;
+        }
+        nodes = matched.children || null;
+      }
+      if (nodes) {
+        logger.debug({ rel, kind: "dir", ms: Date.now() - t0 }, "static.exists");
+        return "dir";
+      }
+      const flat = await this.getTreeFlat();
+      const isFile = flat.some((f) => f.path === rel);
+      logger.debug({ rel, kind: isFile ? "file" : null, ms: Date.now() - t0 }, "static.exists");
+      return isFile ? "file" : null;
     },
     async readFile(rel) {
       const t0 = Date.now();
