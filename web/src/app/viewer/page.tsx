@@ -51,6 +51,7 @@ export default function ViewerPage() {
   const addrInputRef = useRef<HTMLInputElement | null>(null);
   const [treeQuery, setTreeQuery] = useState("");
   const [treeFiles, setTreeFiles] = useState<Array<{ name: string; path: string }>>([]);
+  const [treeResults, setTreeResults] = useState<Array<{ name: string; path: string }>>([]);
   const [viewport, setViewport] = useState<"mobile" | "tablet" | "desktop">("desktop");
   const MOBILE_BOTTOM = (process.env.NEXT_PUBLIC_MOBILE_BOTTOM_BAR as string) !== "false";
   const [mobileBarExpanded, setMobileBarExpanded] = useState(false);
@@ -276,16 +277,34 @@ export default function ViewerPage() {
   }, [panel, tree.length]);
 
   useEffect(() => {
-    function flatten(nodes: any[], acc: Array<{ name: string; path: string }>) {
-      for (const n of nodes || []) {
-        if (n.path) acc.push({ name: n.name, path: n.path });
-        if (n.children) flatten(n.children, acc);
-      }
-    }
-    const acc: Array<{ name: string; path: string }> = [];
-    flatten(tree, acc);
-    setTreeFiles(acc);
+    let aborted = false;
+    fetch('/api/tree?flat=1')
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((flat) => { if (!aborted) setTreeFiles(flat || []); })
+      .catch(() => {
+        function flatten(nodes: any[], acc: Array<{ name: string; path: string }>) {
+          for (const n of nodes || []) {
+            if (n.path) acc.push({ name: n.name, path: n.path });
+            if (n.children) flatten(n.children, acc);
+          }
+        }
+        const acc: Array<{ name: string; path: string }> = [];
+        flatten(tree, acc);
+        if (!aborted) setTreeFiles(acc);
+      });
+    return () => { aborted = true; };
   }, [tree]);
+
+  useEffect(() => {
+    const q = treeQuery.trim();
+    if (q.length === 0) { setTreeResults([]); return; }
+    const lc = q.toLowerCase();
+    const timer = window.setTimeout(() => {
+      const res = [...treeFiles].filter((f) => f.name.toLowerCase().includes(lc)).slice(0, 200);
+      setTreeResults(res);
+    }, 150);
+    return () => window.clearTimeout(timer);
+  }, [treeQuery, treeFiles]);
 
   function toggle(pathKey: string) {
     setExpanded((prev) => ({ ...prev, [pathKey]: !prev[pathKey] }));
@@ -434,10 +453,7 @@ export default function ViewerPage() {
           <div className="flex-1 overflow-auto">
             {treeQuery.trim().length > 0 ? (
               <div className="space-y-1 p-2">
-                {[...treeFiles]
-                  .filter((f) => f.name.toLowerCase().includes(treeQuery.toLowerCase()))
-                  .sort((a, b) => a.path.localeCompare(b.path))
-                  .map((f) => (
+                {treeResults.map((f) => (
                     <div
                       key={f.path}
                       className="flex items-center gap-2 px-2 py-1 text-sm hover:bg-zinc-100 cursor-pointer rounded-md select-none"

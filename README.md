@@ -1,7 +1,7 @@
 <div align="center">
   <img src="web/src/cpp.svg" width="120" height="120" alt="C++ Reference Viewer">
   <h1>C++ Reference Viewer</h1>
-  <p>C++ Reference 离线文档</p>
+  <p>C++ Reference 离线文档阅读器</p>
 </div>
 
 方便自用的 C++ Reference 中文版离线文档阅读器。
@@ -33,14 +33,26 @@ cpp-reference-viewer/
 
 ## ⚙️ 配置
 
-本项目的功能都可以使用环境变量进行控制，可以参考 `.env.example`：
+本项目的功能都可以使用环境变量进行控制，参考 `.env.example`（在 `web/` 目录下复制为 `.env.local` 生效）：
 
 ```bash
-WIKI_DIR=../wiki                    # 静态网页的文件目录
-WIKI_EXCLUDE=common                 # 静态网页的共享资源，不应该在文件侧边栏索引
-NEXT_PUBLIC_WIKI_HOME=zh/首页.html   # 访问时打开的第一个页面
-NEXT_PUBLIC_ENABLE_SEARCH=true      # 开启搜索功能；搜索功能会消耗服务器资源
+# ===== 服务器端 =====
+WIKI_DIR=../wiki                    # 文档根目录（绝对路径或相对 web/）
+WIKI_EXCLUDE=common                 # 目录树中需排除的目录，逗号分隔
+WIKI_BLOCK_ANALYTICS=false          # 构建时移除 GA 等统计脚本
+RUNTIME_MODE=server                 # 运行模式：server 或 serverless；Vercel 上会自动为 serverless
+WIKI_OUT_DIR=public/wiki            # 静态 wiki 输出目录（相对 web/）
+
+# ===== 客户端（必须以 NEXT_PUBLIC_ 开头）=====
+NEXT_PUBLIC_WIKI_HOME=zh/首页.html   # 首页路径（相对 wiki 根）
+NEXT_PUBLIC_ENABLE_SEARCH=true      # 是否启用全文检索（占用一定资源）
+NEXT_PUBLIC_MOBILE_BOTTOM_BAR=true  # 移动端底部地址栏（Safari 风格）
 ```
+
+运行模式说明：
+
+- `server` 模式：运行时直接读取本地文件系统。（开发服务器 or 自用）
+- `serverless` 模式：使用构建脚本生成的静态资源。（Vercel 部署）
 
 建议使用 Vercel 部署或者直接在本地运行。
 

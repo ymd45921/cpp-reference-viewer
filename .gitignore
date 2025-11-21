@@ -20,8 +20,9 @@ web/.env*
 web/npm-cache/
 web/*.tsbuildinfo
 web/next-env.d.ts
-web/public/search-index
-web/public/wiki
+web/public/*
+!web/public/dir-index
+!web/public/icon.svg
 
 # Logs
 *.log
@@ -35,3 +36,4 @@ yarn-error.log*
 *.tmp
 .cache/
 node_modules
+.vercel/

@@ -2,6 +2,14 @@
   "buildCommand": "cd web && npm run build",
   "installCommand": "cd web && npm install",
   "outputDirectory": "web/.next",
+  "env": {
+    "RUNTIME_MODE": "serverless"
+  },
+  "build": {
+    "env": {
+      "RUNTIME_MODE": "serverless"
+    }
+  },
   "rewrites": [
     {
       "source": "/wiki/:path*",
