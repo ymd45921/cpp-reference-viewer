@@ -1,7 +1,8 @@
 import path from "node:path";
 import fs from "node:fs";
 import { promises as fsp } from "node:fs";
-import { WIKI_DIR as DEFAULT_WIKI_DIR, sanitizeHtml } from "../src/lib/wiki";
+import { WIKI_DIR as DEFAULT_WIKI_DIR } from "../src/lib/wiki-fs";
+import { sanitizeHtml } from "../src/lib/wiki-core";
 import { logger } from "../src/lib/logger";
 
 type Strategy = "link" | "copy";

@@ -13,10 +13,11 @@
 ```bash
 cd web
 npm install
+npm run build
 npm run dev
 ```
 
-访问 `http://localhost:3000/viewer` 即可使用。
+在启动开发服务器之前，需要先运行一次构建生成所需要的静态资源。之后访问 `http://localhost:3000/viewer` 即可使用。
 
 ## 📦 项目结构
 
@@ -25,7 +26,7 @@ npm run dev
 ```
 cpp-reference-viewer/
 ├── web/                   # Web 应用
-│   ├── src/
+│   └── src/
 └── wiki/                  # 离线文档
 ```
 
@@ -36,11 +37,10 @@ cpp-reference-viewer/
 本项目的功能都可以使用环境变量进行控制，参考 `.env.example`（在 `web/` 目录下复制为 `.env.local` 生效）：
 
 ```bash
-# ===== 服务器端 =====
+# ===== 服务器端（构建阶段）=====
 WIKI_DIR=../wiki                    # 文档根目录（绝对路径或相对 web/）
 WIKI_EXCLUDE=common                 # 目录树中需排除的目录，逗号分隔
 WIKI_BLOCK_ANALYTICS=false          # 构建时移除 GA 等统计脚本
-RUNTIME_MODE=server                 # 运行模式：server 或 serverless；Vercel 上会自动为 serverless
 WIKI_OUT_DIR=public/wiki            # 静态 wiki 输出目录（相对 web/）
 
 # ===== 客户端（必须以 NEXT_PUBLIC_ 开头）=====
@@ -49,12 +49,7 @@ NEXT_PUBLIC_ENABLE_SEARCH=true      # 是否启用全文检索（占用一定资
 NEXT_PUBLIC_MOBILE_BOTTOM_BAR=true  # 移动端底部地址栏（Safari 风格）
 ```
 
-运行模式说明：
-
-- `server` 模式：运行时直接读取本地文件系统。（开发服务器 or 自用）
-- `serverless` 模式：使用构建脚本生成的静态资源。（Vercel 部署）
-
-建议使用 Vercel 部署或者直接在本地运行。
+建议使用 Vercel 或任意支持静态资源 CDN 的平台部署；本地开发同样依赖构建产物（`npm run build`）。
 
 ## 📄 附录
 

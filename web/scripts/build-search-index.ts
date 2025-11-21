@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { promises as fsp } from "node:fs";
 import path from "node:path";
-import { WIKI_DIR as DEFAULT_WIKI_DIR, htmlToText } from "../src/lib/wiki";
+import { WIKI_DIR as DEFAULT_WIKI_DIR, htmlToText } from "../src/lib/wiki-fs";
 import { tokenize, hash1 } from "../src/lib/shared/search";
 
 function isHtml(name: string) { return /\.html?$/i.test(name) }

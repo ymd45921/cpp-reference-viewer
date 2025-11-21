@@ -1,6 +1,6 @@
 import path from "node:path";
 import { promises as fsp } from "node:fs";
-import { WIKI_DIR as DEFAULT_WIKI_DIR, EXCLUDE_DIRS as DEFAULT_EXCLUDE } from "../src/lib/wiki";
+import { WIKI_DIR as DEFAULT_WIKI_DIR, EXCLUDE_DIRS as DEFAULT_EXCLUDE } from "../src/lib/wiki-fs";
 import { buildTreeFs } from "../src/lib/shared/tree";
 
 export async function buildTree(opts: { wikiDir?: string; exclude?: string[]; outTree: string; outFlat: string }) {

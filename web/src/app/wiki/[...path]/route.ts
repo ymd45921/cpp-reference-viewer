@@ -1,13 +1,12 @@
 import { NextRequest } from "next/server";
-import { getContentType, sanitizeHtml, BLOCK_ANALYTICS } from "@/lib/wiki";
-import { RUNTIME_MODE } from "@/lib/config";
-import { getProvider } from "@/lib/providers/factory";
+import { getContentType, sanitizeHtml, BLOCK_ANALYTICS } from "@/lib/wiki-core";
+import { createStaticProvider } from "@/lib/providers/static";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   const p = await params;
   const rel = (p.path || []).join("/");
   const origin = new URL(req.url).origin;
-  const provider = getProvider(origin);
+  const provider = createStaticProvider(origin);
   const kind = await provider.exists(rel);
   if (kind === "file") {
     const data = await provider.readFile(rel);
@@ -26,7 +25,7 @@ export async function HEAD(req: NextRequest, { params }: { params: Promise<{ pat
   const p = await params;
   const rel = (p.path || []).join("/");
   const origin = new URL(req.url).origin;
-  const provider = getProvider(origin);
+  const provider = createStaticProvider(origin);
   const kind = await provider.exists(rel);
   if (kind === "file") {
     const type = getContentType(rel);

@@ -1,5 +1,5 @@
 import { STATIC_WIKI_PREFIX, STATIC_SEARCH_PREFIX, STATIC_TREE_PATH, STATIC_TREE_FLAT_PATH } from "@/lib/config";
-import { getContentType } from "@/lib/wiki";
+import { getContentType } from "@/lib/wiki-core";
 import { listFromTree } from "@/lib/shared/tree";
 import { bm25Score, fetchJson, hash1, tokenize } from "@/lib/shared/search";
 import type { Provider, DirItem, TreeNode, Hit, FileHit } from "./types";
