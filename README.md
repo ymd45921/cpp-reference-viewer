@@ -49,7 +49,7 @@ NEXT_PUBLIC_ENABLE_SEARCH=true      # 是否启用全文检索（占用一定资
 NEXT_PUBLIC_MOBILE_BOTTOM_BAR=true  # 移动端底部地址栏（Safari 风格）
 ```
 
-建议使用 Vercel 或任意支持静态资源 CDN 的平台部署；本地开发同样依赖构建产物（`npm run build`）。
+可以使用 Vercel 或任意支持静态资源 CDN 的平台部署；但是更建议本地预览以获得最好的速度和表现。
 
 ## 📄 附录
 

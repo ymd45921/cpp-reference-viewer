@@ -107,45 +107,73 @@ export default function ViewerPage() {
         const doc = frameEl.contentDocument;
         if (!win || !doc) return;
         const sameOrigin = win.location.origin === window.location.origin;
-        if (sameOrigin && win.location.pathname.startsWith("/wiki/")) {
-          const rel = win.location.pathname.replace(/^\/wiki\//, "");
-          setAddr(rel);
-          const last = rel.split("/").pop() || rel;
-          const title = decodeURIComponent(last).replace(/\.(html?|htm)$/i, "");
-          setMobileTitle(title);
-          doc.addEventListener(
-            "click",
-            (ev) => {
-              const target = ev.target as HTMLElement | null;
-              const anchor = target?.closest("a") as HTMLAnchorElement | null;
-              if (!anchor) return;
-              const href = anchor.getAttribute("href") || "";
-              if (!href) return;
-              ev.preventDefault();
-              const url = new URL(href, win.location.href);
-              const isExternal = url.origin !== window.location.origin;
-              if (isExternal) {
-                navigate(url.href);
-              } else {
-                const p = url.pathname.replace(/^\/wiki\//, "");
-                navigate(p + (url.search || "") + (url.hash || ""));
+        if (sameOrigin) {
+          if (win.location.pathname.startsWith("/wiki/")) {
+            const rel = win.location.pathname.replace(/^\/wiki\//, "");
+            setAddr(rel);
+            const last = rel.split("/").pop() || rel;
+            const title = decodeURIComponent(last).replace(/\.(html?|htm)$/i, "");
+            setMobileTitle(title);
+            doc.addEventListener(
+              "click",
+              (ev) => {
+                const target = ev.target as HTMLElement | null;
+                const anchor = target?.closest("a") as HTMLAnchorElement | null;
+                if (!anchor) return;
+                const href = anchor.getAttribute("href") || "";
+                if (!href) return;
+                ev.preventDefault();
+                const url = new URL(href, win.location.href);
+                const isExternal = url.origin !== window.location.origin;
+                if (isExternal) {
+                  navigate(url.href);
+                } else {
+                  const p = url.pathname.replace(/^\/wiki\//, "");
+                  navigate(p + (url.search || "") + (url.hash || ""));
+                }
+              },
+              { capture: true }
+            );
+            let lastY = win.scrollY;
+            const onScroll = () => {
+              const y = win.scrollY;
+              const dy = y - lastY;
+              if (dy < -10) {
+                setMobileBarExpanded(true);
+              } else if (dy > 10) {
+                setMobileBarExpanded(false);
               }
-            },
-            { capture: true }
-          );
-
-          let lastY = win.scrollY;
-          const onScroll = () => {
-            const y = win.scrollY;
-            const dy = y - lastY;
-            if (dy < -10) {
-              setMobileBarExpanded(true);
-            } else if (dy > 10) {
-              setMobileBarExpanded(false);
-            }
-            lastY = y;
-          };
-          win.addEventListener("scroll", onScroll, { passive: true });
+              lastY = y;
+            };
+            win.addEventListener("scroll", onScroll, { passive: true });
+          } else if (win.location.pathname.startsWith("/dir-index/")) {
+            const q = new URLSearchParams(win.location.search);
+            const rel = q.get("path") || "";
+            setAddr(rel);
+            const last = rel.split("/").pop() || rel;
+            const title = decodeURIComponent(last).replace(/\.(html?|htm)$/i, "");
+            setMobileTitle(title);
+            doc.addEventListener(
+              "click",
+              (ev) => {
+                const target = ev.target as HTMLElement | null;
+                const anchor = target?.closest("a") as HTMLAnchorElement | null;
+                if (!anchor) return;
+                const href = anchor.getAttribute("href") || "";
+                if (!href) return;
+                ev.preventDefault();
+                const url = new URL(href, win.location.href);
+                const isExternal = url.origin !== window.location.origin;
+                if (isExternal) {
+                  navigate(url.href);
+                } else if (url.pathname.startsWith("/wiki/")) {
+                  const p = url.pathname.replace(/^\/wiki\//, "");
+                  navigate(p + (url.search || "") + (url.hash || ""));
+                }
+              },
+              { capture: true }
+            );
+          }
         }
       } catch {}
       setIsLoading(false);
